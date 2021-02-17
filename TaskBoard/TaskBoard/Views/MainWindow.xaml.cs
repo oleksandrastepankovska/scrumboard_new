@@ -21,9 +21,21 @@ namespace TaskBoard.Views
         {
             var model = new MainWindowViewModel();
 
-            var assignmentsPanel = new StackPanel();
-            assignmentsPanel.Orientation = Orientation.Horizontal;
+            var mainPanel = new StackPanel() { Orientation = Orientation.Vertical };
 
+            var controlPanel = new StackPanel();
+            var createAssignmentButton = new Button()
+            {
+                Name = "CreateAssignmentButton",
+                Content = "Create Asignment",
+                Width = 150
+            };
+            createAssignmentButton.Click += CreateAssignmentButton_Click;
+            controlPanel.Children.Add(createAssignmentButton);
+
+            mainPanel.Children.Add(controlPanel);
+
+            var assignmentsPanel = new StackPanel() { Orientation = Orientation.Horizontal };
             foreach (var workStatus in model.Statuses)
             {
                 var assignmentsByWorkStatusPanel = new StackPanel();
@@ -32,7 +44,7 @@ namespace TaskBoard.Views
                 var workStatusLabel = new Label();
                 workStatusLabel.Content = workStatus.Name;
                 assignmentsByWorkStatusPanel.Children.Add(workStatusLabel);
-                
+
                 var assignmentsDataGrid = new DataGrid();
                 assignmentsDataGrid.AutoGenerateColumns = false;
                 assignmentsDataGrid.ItemsSource = workStatus.Assignments;
@@ -55,7 +67,14 @@ namespace TaskBoard.Views
                 assignmentsPanel.Children.Add(assignmentsByWorkStatusPanel);
             }
 
-            MainGrid.Children.Add(assignmentsPanel);
+            mainPanel.Children.Add(assignmentsPanel);
+
+            mainGrid.Children.Add(mainPanel);
+        }
+
+        private void CreateAssignmentButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
