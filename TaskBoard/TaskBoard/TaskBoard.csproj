@@ -81,6 +81,8 @@
     </Compile>
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\TaskBoardDbContext.cs" />
+    <Compile Include="Infrastructure\Abstract\IRepository.cs" />
+    <Compile Include="Infrastructure\Concrete\Repository.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
