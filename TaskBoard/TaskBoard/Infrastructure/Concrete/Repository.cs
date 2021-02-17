@@ -31,7 +31,7 @@ namespace TaskBoard.Infrastructure.Concrete
             return includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty)).FirstOrDefault();
         }
 
-        public IEnumerable<TEntity> Get(params Expression<Func<TEntity, object>>[] includes)
+        public IEnumerable<TEntity> GetAll(params Expression<Func<TEntity, object>>[] includes)
         {
             return includes.Aggregate(_dbSet.AsQueryable(), (current, includeProperty) => current.Include(includeProperty)).ToList();
         }

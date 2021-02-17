@@ -8,7 +8,7 @@ namespace TaskBoard.Infrastructure.Abstract
     {
         TEntity Create(TEntity entity);
         TEntity GetSingle(Expression<Func<TEntity, bool>> criteria, params Expression<Func<TEntity, object>>[] includes);
-        IEnumerable<TEntity> Get(params Expression<Func<TEntity, object>>[] includes);
+        IEnumerable<TEntity> GetAll(params Expression<Func<TEntity, object>>[] includes);
         IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> criteria, params Expression<Func<TEntity, object>>[] includes);
         TEntity Update(TEntity entity);
         void Delete(TEntity entity);
