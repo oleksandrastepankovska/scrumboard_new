@@ -7,7 +7,7 @@ namespace TaskBoard.Data
 {
     public class TaskBoardDbContext : DbContext
     {
-        public TaskBoardDbContext() : base("ScrumBoard") { }
+        public TaskBoardDbContext() : base("TaskBoard") { }
 
         public DbSet<Assignment> Assignment { get; set; }
         public DbSet<Status> Status { get; set; }
