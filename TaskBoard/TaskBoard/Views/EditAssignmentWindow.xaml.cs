@@ -1,18 +1,8 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using TaskBoard.Core;
+using TaskBoard.ViewModels;
 
 namespace TaskBoard.Views
 {
@@ -22,45 +12,40 @@ namespace TaskBoard.Views
     public partial class EditAssignmentWindow : Window
     {
         private IMapper _mapper { get; set; }
-
-        public EditAssignmentWindow()
+        private EditAssignmentWindowViewModel Model { get; set; }
+        public EditAssignmentWindow(EditAssignmentWindowViewModel model)
         {
             _mapper = MapperFactory.CreateMapper();
-            //Model = model;
-            //DataContext = Model;
+            Model = model;
+            DataContext = Model;
             InitializeComponent();
-            Loaded += CreateAssignmentWindow_Loaded;
+            Loaded += EditAssignmentWindow_Loaded;
         }
 
-        private void CreateAssignmentWindow_Loaded(object sender, RoutedEventArgs e)
+        private void EditAssignmentWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            //assignmentStatusComboBox.SelectedValuePath = ComboBoxItem.TagProperty.Name;
-            //foreach (var item in Model.Statuses)
-            //{
-            //    assignmentStatusComboBox.Items.Add(new ComboBoxItem()
-            //    {
-            //        Content = item.Name,
-            //        Tag = item.Id
-            //    });
-            //}
-            //projectComboBox.SelectedValuePath = ComboBoxItem.TagProperty.Name;
-            //foreach (var item in Model.Projects)
-            //{
-            //    projectComboBox.Items.Add(new ComboBoxItem()
-            //    {
-            //        Content = item.Name,
-            //        Tag = item.Id
-            //    });
-            //}
-            //assigneeComboBox.SelectedValuePath = ComboBoxItem.TagProperty.Name;
-            //foreach (var item in Model.Persons)
-            //{
-            //    assigneeComboBox.Items.Add(new ComboBoxItem()
-            //    {
-            //        Content = $"{item.FirstName} {item.LastName}",
-            //        Tag = item.Id
-            //    });
-            //}
+            assignmentNameTextBox.Text = Model.Assignment.Name;
+            assignmentDescriptionTextBox.Text = Model.Assignment.Description;
+            assignmentStatusComboBox.SelectedValuePath = ComboBoxItem.TagProperty.Name;
+            foreach (var item in Model.Statuses)
+            {
+                assignmentStatusComboBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = item.Name,
+                    Tag = item.Id,
+                    IsSelected = item.Id == Model.Assignment.StatusId
+                });
+            }
+            assigneeComboBox.SelectedValuePath = ComboBoxItem.TagProperty.Name;
+            foreach (var item in Model.Persons)
+            {
+                assigneeComboBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = $"{item.FirstName} {item.LastName}",
+                    Tag = item.Id,
+                    IsSelected = item.Id == Model.Assignment.AssigneeId
+                });
+            }
         }
 
         private void createAssignmentButton_Click(object sender, RoutedEventArgs e)

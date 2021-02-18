@@ -118,7 +118,19 @@ namespace TaskBoard.Views
         {
             var row = sender as DataGridRow;
 
-            var editAssignmentWindow = new EditAssignmentWindow();
+            var editAssignmentWindowViewModel = new EditAssignmentWindowViewModel();
+            editAssignmentWindowViewModel.Assignment = row.Item as AssignmentViewModel;
+            using (var context = new TaskBoardDbContext())
+            {
+                var statusRepository = new Repository<Status>(context);
+                var statuses = statusRepository.GetAll();
+                editAssignmentWindowViewModel.Statuses = _mapper.Map<IEnumerable<Status>, IEnumerable<StatusViewModel>>(statuses);
+                var personRepository = new Repository<Person>(context);
+                var persons = personRepository.GetAll();
+                editAssignmentWindowViewModel.Persons = _mapper.Map<IEnumerable<Person>, IEnumerable<PersonViewModel>>(persons);
+            }
+
+            var editAssignmentWindow = new EditAssignmentWindow(editAssignmentWindowViewModel);
             editAssignmentWindow.Show();
         }
     }

@@ -103,10 +103,12 @@
     <Compile Include="Infrastructure\Concrete\Repository.cs" />
     <Compile Include="ViewModels\Entities\AssignmentViewModel.cs" />
     <Compile Include="ViewModels\Entities\CreateAssignmentViewModel.cs" />
+    <Compile Include="ViewModels\Entities\EditAssignmentViewModel.cs" />
     <Compile Include="ViewModels\Entities\PersonViewModel.cs" />
     <Compile Include="ViewModels\Entities\ProjectViewModel.cs" />
     <Compile Include="ViewModels\Entities\StatusViewModel.cs" />
     <Compile Include="ViewModels\Windows\CreateAssignmentWindowViewModel.cs" />
+    <Compile Include="ViewModels\Windows\EditAssignmentWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
     <Compile Include="Views\CreateAssignmentWindow.xaml.cs">
       <DependentUpon>CreateAssignmentWindow.xaml</DependentUpon>
