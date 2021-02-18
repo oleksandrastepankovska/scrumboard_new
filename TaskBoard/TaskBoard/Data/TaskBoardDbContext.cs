@@ -30,6 +30,10 @@ namespace TaskBoard.Data
             modelBuilder.Entity<Status>()
                 .HasKey(c => c.Id);
 
+            modelBuilder.Entity<Status>()
+                .Property(status => status.Name)
+                .IsRequired();
+
             modelBuilder.Entity<Project>()
                 .HasKey(project => project.Id);
 
@@ -43,6 +47,14 @@ namespace TaskBoard.Data
 
             modelBuilder.Entity<Person>()
                 .HasKey(person => person.Id);
+            
+            modelBuilder.Entity<Person>()
+                .Property(person => person.FirstName)
+                .IsRequired();
+
+            modelBuilder.Entity<Person>()
+                .Property(person => person.LastName)
+                .IsRequired();
 
             modelBuilder.Entity<Status>()
                 .HasMany(status => status.Assignments)
@@ -62,7 +74,7 @@ namespace TaskBoard.Data
 
             modelBuilder.Entity<Person>()
                 .HasMany(person => person.Assignments)
-                .WithOptional(assignment => assignment.Assignee)
+                .WithRequired(assignment => assignment.Assignee)
                 .HasForeignKey(assignment => assignment.AssigneeId)
                 .WillCascadeOnDelete(false);
 
