@@ -72,6 +72,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\EditAssignmentWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -97,12 +101,20 @@
     <Compile Include="Data\TaskBoardDbContext.cs" />
     <Compile Include="Infrastructure\Abstract\IRepository.cs" />
     <Compile Include="Infrastructure\Concrete\Repository.cs" />
-    <Compile Include="ViewModels\Assignments\CreateAssignmentViewModel.cs" />
-    <Compile Include="ViewModels\Assignments\StatusViewModel.cs" />
+    <Compile Include="ViewModels\Entities\AssignmentViewModel.cs" />
+    <Compile Include="ViewModels\Entities\CreateAssignmentViewModel.cs" />
+    <Compile Include="ViewModels\Entities\EditAssignmentViewModel.cs" />
+    <Compile Include="ViewModels\Entities\PersonViewModel.cs" />
+    <Compile Include="ViewModels\Entities\ProjectViewModel.cs" />
+    <Compile Include="ViewModels\Entities\StatusViewModel.cs" />
     <Compile Include="ViewModels\Windows\CreateAssignmentWindowViewModel.cs" />
+    <Compile Include="ViewModels\Windows\EditAssignmentWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
     <Compile Include="Views\CreateAssignmentWindow.xaml.cs">
       <DependentUpon>CreateAssignmentWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditAssignmentWindow.xaml.cs">
+      <DependentUpon>EditAssignmentWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
