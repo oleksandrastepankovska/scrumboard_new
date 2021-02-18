@@ -8,5 +8,11 @@
 
         public int StatusId { get; set; }
         public Status Status { get; set; }
+
+        public int AssigneeId { get; set; }
+        public Person Assignee { get; set; }
+
+        public int ProjectId { get; set; }
+        public Project Project { get; set; }
     }
 }
