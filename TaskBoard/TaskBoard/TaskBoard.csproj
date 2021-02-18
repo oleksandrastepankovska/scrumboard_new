@@ -82,8 +82,6 @@
     </Compile>
     <Compile Include="Core\MapperFactory.cs" />
     <Compile Include="Data\Entities\Assignment.cs" />
-    <Compile Include="Data\Entities\Person.cs" />
-    <Compile Include="Data\Entities\Project.cs" />
     <Compile Include="Data\Entities\Status.cs" />
     <Compile Include="Data\Migrations\202102171314558_Initial.cs" />
     <Compile Include="Data\Migrations\202102171314558_Initial.designer.cs">
