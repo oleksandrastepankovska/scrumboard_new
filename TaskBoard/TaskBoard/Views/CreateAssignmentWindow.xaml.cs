@@ -18,6 +18,7 @@ using TaskBoard.Data.Entities;
 using TaskBoard.Infrastructure.Abstract;
 using TaskBoard.Infrastructure.Concrete;
 using TaskBoard.ViewModels;
+using TaskBoard.ViewModels.Entities;
 
 namespace TaskBoard.Views
 {
@@ -71,6 +72,8 @@ namespace TaskBoard.Views
 
         private void createAssignmentButton_Click(object sender, RoutedEventArgs e)
         {
+            var mainWindowViewModel = new MainWindowViewModel();
+
             Model.CreatedAssignment.Name = assignmentNameTextBox.Text;
             Model.CreatedAssignment.Description = assignmentDescriptionTextBox.Text;
             Model.CreatedAssignment.StatusId = Int32.TryParse(assignmentStatusComboBox.SelectedValue.ToString(), out var statusId)
@@ -84,11 +87,20 @@ namespace TaskBoard.Views
                 : Model.Persons.FirstOrDefault().Id;
             using (var context = new TaskBoardDbContext())
             {
-                var assignmentRepository = new Repository<Assignment>(context);
+                var assignmentsRepository = new Repository<Assignment>(context);
                 var assignment = _mapper.Map<Assignment>(Model.CreatedAssignment);
-                assignment = assignmentRepository.Add(assignment);
+                assignment = assignmentsRepository.Add(assignment);
                 context.SaveChanges();
+
+                var statusRepository = new Repository<Status>(context);
+                var statuses = statusRepository.GetAll(x => x.Assignments);
+                mainWindowViewModel.Statuses = _mapper.Map<IEnumerable<Status>, IEnumerable<StatusViewModel>>(statuses);
+                var assignments = assignmentsRepository.GetAll(x => x.Project, x => x.Assignee);
+                mainWindowViewModel.Assignments = _mapper.Map<IEnumerable<Assignment>, IEnumerable<AssignmentViewModel>>(assignments);
             }
+
+            var mainWindow = new MainWindow(mainWindowViewModel);
+            mainWindow.Show();
             this.Close();
         }
     }

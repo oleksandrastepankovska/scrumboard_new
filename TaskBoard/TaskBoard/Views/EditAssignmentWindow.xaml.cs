@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,6 +9,7 @@ using TaskBoard.Data;
 using TaskBoard.Data.Entities;
 using TaskBoard.Infrastructure.Concrete;
 using TaskBoard.ViewModels;
+using TaskBoard.ViewModels.Entities;
 
 namespace TaskBoard.Views
 {
@@ -55,6 +57,8 @@ namespace TaskBoard.Views
 
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
+            var mainWindowViewModel = new MainWindowViewModel();
+
             Model.EditedAssignment.Name = assignmentNameTextBox.Text;
             Model.EditedAssignment.Description = assignmentDescriptionTextBox.Text;
             Model.EditedAssignment.StatusId = Int32.TryParse(assignmentStatusComboBox.SelectedValue.ToString(), out var statusId)
@@ -65,12 +69,43 @@ namespace TaskBoard.Views
                 : Model.Persons.FirstOrDefault().Id;
             using (var context = new TaskBoardDbContext())
             {
-                var assignmentRepository = new Repository<Assignment>(context);
-                var assignment = assignmentRepository.GetSingle(x => x.Id == Model.Assignment.Id);
+                var assignmentsRepository = new Repository<Assignment>(context);
+                var assignment = assignmentsRepository.GetSingle(x => x.Id == Model.Assignment.Id);
                 _mapper.Map(Model.EditedAssignment, assignment);
-                assignment = assignmentRepository.Update(assignment);
+                assignment = assignmentsRepository.Update(assignment);
                 context.SaveChanges();
+
+                var statusRepository = new Repository<Status>(context);
+                var statuses = statusRepository.GetAll(x => x.Assignments);
+                mainWindowViewModel.Statuses = _mapper.Map<IEnumerable<Status>, IEnumerable<StatusViewModel>>(statuses);
+                var assignments = assignmentsRepository.GetAll(x => x.Project, x => x.Assignee);
+                mainWindowViewModel.Assignments = _mapper.Map<IEnumerable<Assignment>, IEnumerable<AssignmentViewModel>>(assignments);
             }
+
+            var mainWindow = new MainWindow(mainWindowViewModel);
+            mainWindow.Show();
+            this.Close();
+        }
+
+        private void deleteAssignmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindowViewModel = new MainWindowViewModel();
+            using (var context = new TaskBoardDbContext())
+            {
+                var assignmentsRepository = new Repository<Assignment>(context);
+                var assignment = assignmentsRepository.GetSingle(x => x.Id == Model.Assignment.Id);
+                assignmentsRepository.Delete(assignment);
+                context.SaveChanges();
+
+                var statusRepository = new Repository<Status>(context);
+                var statuses = statusRepository.GetAll(x => x.Assignments);
+                mainWindowViewModel.Statuses = _mapper.Map<IEnumerable<Status>, IEnumerable<StatusViewModel>>(statuses);
+                var assignments = assignmentsRepository.GetAll(x => x.Project, x => x.Assignee);
+                mainWindowViewModel.Assignments = _mapper.Map<IEnumerable<Assignment>, IEnumerable<AssignmentViewModel>>(assignments);
+            }
+
+            var mainWindow = new MainWindow(mainWindowViewModel);
+            mainWindow.Show();
             this.Close();
         }
     }

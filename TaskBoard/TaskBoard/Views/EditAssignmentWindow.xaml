@@ -20,6 +20,6 @@
         <Label x:Name="assignmentStatusLabel" Content="Status" HorizontalAlignment="Left" Margin="30,182,0,0" VerticalAlignment="Top" Height="26" Width="42"/>
         <ComboBox x:Name="assigneeComboBox" HorizontalAlignment="Left" Margin="30,261,0,0" VerticalAlignment="Top" Width="175" Height="22"/>
         <Label x:Name="assigneeLabel" Content="Assignee" HorizontalAlignment="Left" Margin="30,235,0,0" VerticalAlignment="Top" Height="26" Width="58" RenderTransformOrigin="0.621,-1.7"/>
-        <Button x:Name="deleteAssignmentButton" Content="Delete Assigment" HorizontalAlignment="Left" Height="50" Margin="30,9.6,0,-59.6" VerticalAlignment="Top" Width="300" Grid.Row="1" />
+        <Button x:Name="deleteAssignmentButton" Content="Delete Assigment" HorizontalAlignment="Left" Height="50" Margin="30,9.6,0,-59.6" VerticalAlignment="Top" Width="300" Grid.Row="1" Click="deleteAssignmentButton_Click" />
     </Grid>
 </Window>

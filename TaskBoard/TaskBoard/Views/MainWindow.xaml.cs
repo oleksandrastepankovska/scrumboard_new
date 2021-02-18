@@ -112,6 +112,7 @@ namespace TaskBoard.Views
 
             CreateAssignmentWindow createAssignmentWindow = new CreateAssignmentWindow(createAssignmentWindowModel);
             createAssignmentWindow.Show();
+            this.Close();
         }
 
         private void AssignmentsGridRow_DoubleClick(object sender, MouseButtonEventArgs e)
@@ -132,6 +133,7 @@ namespace TaskBoard.Views
 
             var editAssignmentWindow = new EditAssignmentWindow(editAssignmentWindowViewModel);
             editAssignmentWindow.Show();
+            this.Close();
         }
     }
 }
