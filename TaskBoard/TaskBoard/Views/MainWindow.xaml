@@ -6,6 +6,5 @@
         xmlns:local="clr-namespace:TaskBoard.Views"
         mc:Ignorable="d"
         Title="MainWindow" Height="auto" Width="auto">
-    <Grid Name="MainGrid">
-    </Grid>
+    <Grid Name="mainGrid"/>
 </Window>
