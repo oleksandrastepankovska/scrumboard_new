@@ -49,6 +49,24 @@ namespace TaskBoard.Views
                     Tag = item.Id
                 });
             }
+            projectComboBox.SelectedValuePath = ComboBoxItem.TagProperty.Name;
+            foreach (var item in Model.Projects)
+            {
+                projectComboBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = item.Name,
+                    Tag = item.Id
+                });
+            }
+            assigneeComboBox.SelectedValuePath = ComboBoxItem.TagProperty.Name;
+            foreach (var item in Model.Persons)
+            {
+                assigneeComboBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = $"{item.FirstName} {item.LastName}",
+                    Tag = item.Id
+                });
+            }
         }
 
         private void createAssignmentButton_Click(object sender, RoutedEventArgs e)
@@ -58,6 +76,12 @@ namespace TaskBoard.Views
             Model.CreatedAssignment.StatusId = Int32.TryParse(assignmentStatusComboBox.SelectedValue.ToString(), out var statusId)
                 ? statusId
                 : Model.Statuses.FirstOrDefault().Id;
+            Model.CreatedAssignment.ProjectId = Int32.TryParse(projectComboBox.SelectedValue.ToString(), out var projectId)
+                ? projectId
+                : Model.Projects.FirstOrDefault().Id;
+            Model.CreatedAssignment.AssigneeId = Int32.TryParse(assigneeComboBox.SelectedValue.ToString(), out var assigneeId)
+                ? assigneeId
+                : Model.Persons.FirstOrDefault().Id;
             using (var context = new TaskBoardDbContext())
             {
                 var assignmentRepository = new Repository<Assignment>(context);

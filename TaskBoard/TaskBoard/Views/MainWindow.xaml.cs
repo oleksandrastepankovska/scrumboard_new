@@ -1,11 +1,15 @@
-﻿using System.Linq;
+﻿using AutoMapper;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using TaskBoard.Core;
 using TaskBoard.Data;
 using TaskBoard.Data.Entities;
 using TaskBoard.Infrastructure.Concrete;
 using TaskBoard.ViewModels;
+using TaskBoard.ViewModels.Entities;
 
 namespace TaskBoard.Views
 {
@@ -14,9 +18,11 @@ namespace TaskBoard.Views
     /// </summary>
     public partial class MainWindow : Window
     {
+        private IMapper _mapper { get; set; }
         private MainWindowViewModel Model { get; set; }
         public MainWindow(MainWindowViewModel model)
         {
+            _mapper = MapperFactory.CreateMapper();
             Model = model;
             InitializeComponent();
             Loaded += MainWindow_Loaded;
@@ -89,7 +95,14 @@ namespace TaskBoard.Views
             using (var context = new TaskBoardDbContext())
             {
                 var statusRepository = new Repository<Status>(context);
-                createAssignmentWindowModel.Statuses = statusRepository.GetAll(x => x.Assignments);
+                var statuses = statusRepository.GetAll();
+                createAssignmentWindowModel.Statuses = _mapper.Map<IEnumerable<Status>, IEnumerable<StatusViewModel>>(statuses);
+                var projectsRepository = new Repository<Project>(context);
+                var projects = projectsRepository.GetAll();
+                createAssignmentWindowModel.Projects = _mapper.Map<IEnumerable<Project>, IEnumerable<ProjectViewModel>>(projects);
+                var personRepository = new Repository<Person>(context);
+                var persons = personRepository.GetAll();
+                createAssignmentWindowModel.Persons = _mapper.Map<IEnumerable<Person>, IEnumerable<PersonViewModel>>(persons);
             }
 
             CreateAssignmentWindow createAssignmentWindow = new CreateAssignmentWindow(createAssignmentWindowModel);

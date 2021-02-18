@@ -15,10 +15,15 @@ namespace TaskBoard.Core
                     .ForMember(x => x.Project, opts => opts.MapFrom(x => x.Project.Name))
                     .ForMember(x => x.StatusId, opts => opts.MapFrom(x => x.StatusId));
 
+                cfg.CreateMap<CreateAssignmentViewModel, Assignment>();
+
                 cfg.CreateMap<Status, StatusViewModel>();
 
                 cfg.CreateMap<StatusViewModel, Status>();
-                cfg.CreateMap<CreateAssignmentViewModel, Assignment>();
+                
+                cfg.CreateMap<Project, ProjectViewModel>();
+
+                cfg.CreateMap<Person, PersonViewModel>();
             });
             return mapperConfig.CreateMapper();
         }
