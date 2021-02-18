@@ -1,7 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using TaskBoard.Data;
 using TaskBoard.Data.Entities;
+using TaskBoard.Infrastructure.Concrete;
 using TaskBoard.ViewModels;
 
 namespace TaskBoard.Views
@@ -21,9 +23,21 @@ namespace TaskBoard.Views
         {
             var model = new MainWindowViewModel();
 
-            var assignmentsPanel = new StackPanel();
-            assignmentsPanel.Orientation = Orientation.Horizontal;
+            var mainPanel = new StackPanel() { Orientation = Orientation.Vertical };
 
+            var controlPanel = new StackPanel();
+            var createAssignmentButton = new Button()
+            {
+                Name = "CreateAssignmentButton",
+                Content = "Create Asignment",
+                Width = 150
+            };
+            createAssignmentButton.Click += CreateAssignmentButton_Click;
+            controlPanel.Children.Add(createAssignmentButton);
+
+            mainPanel.Children.Add(controlPanel);
+
+            var assignmentsPanel = new StackPanel() { Orientation = Orientation.Horizontal };
             foreach (var workStatus in model.Statuses)
             {
                 var assignmentsByWorkStatusPanel = new StackPanel();
@@ -32,7 +46,7 @@ namespace TaskBoard.Views
                 var workStatusLabel = new Label();
                 workStatusLabel.Content = workStatus.Name;
                 assignmentsByWorkStatusPanel.Children.Add(workStatusLabel);
-                
+
                 var assignmentsDataGrid = new DataGrid();
                 assignmentsDataGrid.AutoGenerateColumns = false;
                 assignmentsDataGrid.ItemsSource = workStatus.Assignments;
@@ -55,7 +69,22 @@ namespace TaskBoard.Views
                 assignmentsPanel.Children.Add(assignmentsByWorkStatusPanel);
             }
 
-            MainGrid.Children.Add(assignmentsPanel);
+            mainPanel.Children.Add(assignmentsPanel);
+
+            mainGrid.Children.Add(mainPanel);
+        }
+
+        private void CreateAssignmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            var createAssignmentWindowModel = new CreateAssignmentWindowViewModel();
+            using (var context = new TaskBoardDbContext())
+            {
+                var statusRepository = new Repository<Status>(context);
+                createAssignmentWindowModel.Statuses = statusRepository.GetAll(x => x.Assignments);
+            }
+
+            CreateAssignmentWindow createAssignmentWindow = new CreateAssignmentWindow(createAssignmentWindowModel);
+            createAssignmentWindow.Show();
         }
     }
 }
