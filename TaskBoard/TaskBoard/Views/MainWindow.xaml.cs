@@ -1,7 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using TaskBoard.Data;
 using TaskBoard.Data.Entities;
+using TaskBoard.Infrastructure.Concrete;
 using TaskBoard.ViewModels;
 
 namespace TaskBoard.Views
@@ -74,7 +76,15 @@ namespace TaskBoard.Views
 
         private void CreateAssignmentButton_Click(object sender, RoutedEventArgs e)
         {
+            var createAssignmentWindowModel = new CreateAssignmentWindowViewModel();
+            using (var context = new TaskBoardDbContext())
+            {
+                var statusRepository = new Repository<Status>(context);
+                createAssignmentWindowModel.Statuses = statusRepository.GetAll(x => x.Assignments);
+            }
 
+            CreateAssignmentWindow createAssignmentWindow = new CreateAssignmentWindow(createAssignmentWindowModel);
+            createAssignmentWindow.Show();
         }
     }
 }
