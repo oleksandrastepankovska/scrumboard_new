@@ -82,10 +82,16 @@
     </Compile>
     <Compile Include="Core\MapperFactory.cs" />
     <Compile Include="Data\Entities\Assignment.cs" />
+    <Compile Include="Data\Entities\Person.cs" />
+    <Compile Include="Data\Entities\Project.cs" />
     <Compile Include="Data\Entities\Status.cs" />
     <Compile Include="Data\Migrations\202102171314558_Initial.cs" />
     <Compile Include="Data\Migrations\202102171314558_Initial.designer.cs">
       <DependentUpon>202102171314558_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Migrations\202102181331247_Extending_with_projects_persons.cs" />
+    <Compile Include="Data\Migrations\202102181331247_Extending_with_projects_persons.designer.cs">
+      <DependentUpon>202102181331247_Extending_with_projects_persons.cs</DependentUpon>
     </Compile>
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\TaskBoardDbContext.cs" />
@@ -119,6 +125,9 @@
     </Compile>
     <EmbeddedResource Include="Data\Migrations\202102171314558_Initial.resx">
       <DependentUpon>202102171314558_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Migrations\202102181331247_Extending_with_projects_persons.resx">
+      <DependentUpon>202102181331247_Extending_with_projects_persons.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

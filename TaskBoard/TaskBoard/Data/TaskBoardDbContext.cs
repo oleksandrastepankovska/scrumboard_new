@@ -22,6 +22,7 @@ namespace TaskBoard.Data
             modelBuilder.Entity<Assignment>()
                 .Property(c => c.Name)
                 .IsRequired()
+                .HasMaxLength(300)
                 .HasColumnAnnotation(
                     IndexAnnotation.AnnotationName,
                     new IndexAnnotation(new IndexAttribute("IX_AssignmentName") { IsUnique = false })
@@ -36,6 +37,7 @@ namespace TaskBoard.Data
             modelBuilder.Entity<Project>()
                 .Property(project => project.Name)
                 .IsRequired()
+                .HasMaxLength(300)
                 .HasColumnAnnotation(
                     IndexAnnotation.AnnotationName,
                     new IndexAnnotation(new IndexAttribute("IX_ProjectName") { IsUnique = false })
@@ -62,7 +64,7 @@ namespace TaskBoard.Data
 
             modelBuilder.Entity<Person>()
                 .HasMany(person => person.Assignments)
-                .WithOptional(assignment => assignment.Assignee)
+                .WithRequired(assignment => assignment.Assignee)
                 .HasForeignKey(assignment => assignment.AssigneeId)
                 .WillCascadeOnDelete(false);
 
