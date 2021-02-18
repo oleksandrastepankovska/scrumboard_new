@@ -1,21 +1,12 @@
 ﻿using System.Collections.Generic;
-using TaskBoard.Data;
-using TaskBoard.Data.Entities;
-using TaskBoard.Infrastructure.Concrete;
+using TaskBoard.ViewModels.Entities;
 
 namespace TaskBoard.ViewModels
 {
     public class MainWindowViewModel
     {
-        public IEnumerable<Status> Statuses { get; set; }
+        public IEnumerable<StatusViewModel> Statuses { get; set; } = new List<StatusViewModel>();
 
-        public MainWindowViewModel()
-        {
-            using (var context = new TaskBoardDbContext())
-            {
-                var statusRepository = new Repository<Status>(context);
-                Statuses = statusRepository.GetAll(x => x.Assignments);
-            }
-        }
+        public IEnumerable<AssignmentViewModel> Assignments { get; set; } = new List<AssignmentViewModel>();
     }
 }

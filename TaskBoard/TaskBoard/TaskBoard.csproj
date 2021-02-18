@@ -72,6 +72,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\EditAssignmentWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -82,21 +86,35 @@
     </Compile>
     <Compile Include="Core\MapperFactory.cs" />
     <Compile Include="Data\Entities\Assignment.cs" />
+    <Compile Include="Data\Entities\Person.cs" />
+    <Compile Include="Data\Entities\Project.cs" />
     <Compile Include="Data\Entities\Status.cs" />
     <Compile Include="Data\Migrations\202102171314558_Initial.cs" />
     <Compile Include="Data\Migrations\202102171314558_Initial.designer.cs">
       <DependentUpon>202102171314558_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Data\Migrations\202102181331247_Extending_with_projects_persons.cs" />
+    <Compile Include="Data\Migrations\202102181331247_Extending_with_projects_persons.designer.cs">
+      <DependentUpon>202102181331247_Extending_with_projects_persons.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\TaskBoardDbContext.cs" />
     <Compile Include="Infrastructure\Abstract\IRepository.cs" />
     <Compile Include="Infrastructure\Concrete\Repository.cs" />
-    <Compile Include="ViewModels\Assignments\CreateAssignmentViewModel.cs" />
-    <Compile Include="ViewModels\Assignments\StatusViewModel.cs" />
+    <Compile Include="ViewModels\Entities\AssignmentViewModel.cs" />
+    <Compile Include="ViewModels\Entities\CreateAssignmentViewModel.cs" />
+    <Compile Include="ViewModels\Entities\EditAssignmentViewModel.cs" />
+    <Compile Include="ViewModels\Entities\PersonViewModel.cs" />
+    <Compile Include="ViewModels\Entities\ProjectViewModel.cs" />
+    <Compile Include="ViewModels\Entities\StatusViewModel.cs" />
     <Compile Include="ViewModels\Windows\CreateAssignmentWindowViewModel.cs" />
+    <Compile Include="ViewModels\Windows\EditAssignmentWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
     <Compile Include="Views\CreateAssignmentWindow.xaml.cs">
       <DependentUpon>CreateAssignmentWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditAssignmentWindow.xaml.cs">
+      <DependentUpon>EditAssignmentWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -119,6 +137,9 @@
     </Compile>
     <EmbeddedResource Include="Data\Migrations\202102171314558_Initial.resx">
       <DependentUpon>202102171314558_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Migrations\202102181331247_Extending_with_projects_persons.resx">
+      <DependentUpon>202102181331247_Extending_with_projects_persons.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

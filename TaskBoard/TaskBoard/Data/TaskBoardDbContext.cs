@@ -11,44 +11,61 @@ namespace TaskBoard.Data
 
         public DbSet<Assignment> Assignment { get; set; }
         public DbSet<Status> Status { get; set; }
+        public DbSet<Project> Project { get; set; }
+        public DbSet<Person> Person { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            #region Assignment entity configuration
-
             modelBuilder.Entity<Assignment>()
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Assignment>()
                 .Property(c => c.Name)
-                .HasMaxLength(50)
                 .IsRequired()
+                .HasMaxLength(300)
                 .HasColumnAnnotation(
                     IndexAnnotation.AnnotationName,
                     new IndexAnnotation(new IndexAttribute("IX_AssignmentName") { IsUnique = false })
                 );
 
-            modelBuilder.Entity<Assignment>()
-                .Property(c => c.Description)
-                .HasMaxLength(300);
-
-            #endregion
-
-            #region Status entity configuration
-
             modelBuilder.Entity<Status>()
                 .HasKey(c => c.Id);
 
-            modelBuilder.Entity<Assignment>()
-                .Property(c => c.Name)
-                .HasMaxLength(50);
+            modelBuilder.Entity<Project>()
+                .HasKey(project => project.Id);
 
-            #endregion
+            modelBuilder.Entity<Project>()
+                .Property(project => project.Name)
+                .IsRequired()
+                .HasMaxLength(300)
+                .HasColumnAnnotation(
+                    IndexAnnotation.AnnotationName,
+                    new IndexAnnotation(new IndexAttribute("IX_ProjectName") { IsUnique = false })
+                );
+
+            modelBuilder.Entity<Person>()
+                .HasKey(person => person.Id);
 
             modelBuilder.Entity<Status>()
                 .HasMany(status => status.Assignments)
                 .WithRequired(assignment => assignment.Status)
                 .HasForeignKey(assignment => assignment.StatusId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Project>()
+                .HasMany(project => project.Assignees)
+                .WithMany(person => person.Projects);
+
+            modelBuilder.Entity<Project>()
+                .HasMany(project => project.Assignments)
+                .WithRequired(assignment => assignment.Project)
+                .HasForeignKey(assignment => assignment.ProjectId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Person>()
+                .HasMany(person => person.Assignments)
+                .WithRequired(assignment => assignment.Assignee)
+                .HasForeignKey(assignment => assignment.AssigneeId)
                 .WillCascadeOnDelete(false);
 
             base.OnModelCreating(modelBuilder);

@@ -2,20 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using TaskBoard.Core;
 using TaskBoard.Data;
 using TaskBoard.Data.Entities;
-using TaskBoard.Infrastructure.Abstract;
 using TaskBoard.Infrastructure.Concrete;
 using TaskBoard.ViewModels;
 using TaskBoard.ViewModels.Entities;
@@ -23,41 +14,34 @@ using TaskBoard.ViewModels.Entities;
 namespace TaskBoard.Views
 {
     /// <summary>
-    /// Interaction logic for CreateAssignmentView.xaml
+    /// Interaction logic for EditAssignmentWindow.xaml
     /// </summary>
-    public partial class CreateAssignmentWindow : Window
+    public partial class EditAssignmentWindow : Window
     {
         private IMapper _mapper { get; set; }
-        private CreateAssignmentWindowViewModel Model { get; set; }
-
-        public CreateAssignmentWindow(CreateAssignmentWindowViewModel model)
+        private EditAssignmentWindowViewModel Model { get; set; }
+        public EditAssignmentWindow(EditAssignmentWindowViewModel model)
         {
             _mapper = MapperFactory.CreateMapper();
             Model = model;
             DataContext = Model;
             InitializeComponent();
-            Loaded += CreateAssignmentWindow_Loaded;
-            Closing += CreateAssignmentWindow_Closed;
+            Loaded += EditAssignmentWindow_Loaded;
+            Closing += EditAssignmentWindow_Closed;
         }
 
-        private void CreateAssignmentWindow_Loaded(object sender, RoutedEventArgs e)
+        private void EditAssignmentWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            assignmentNameTextBox.Text = Model.Assignment.Name;
+            assignmentDescriptionTextBox.Text = Model.Assignment.Description;
             assignmentStatusComboBox.SelectedValuePath = ComboBoxItem.TagProperty.Name;
             foreach (var item in Model.Statuses)
             {
                 assignmentStatusComboBox.Items.Add(new ComboBoxItem()
                 {
                     Content = item.Name,
-                    Tag = item.Id
-                });
-            }
-            projectComboBox.SelectedValuePath = ComboBoxItem.TagProperty.Name;
-            foreach (var item in Model.Projects)
-            {
-                projectComboBox.Items.Add(new ComboBoxItem()
-                {
-                    Content = item.Name,
-                    Tag = item.Id
+                    Tag = item.Id,
+                    IsSelected = item.Id == Model.Assignment.StatusId
                 });
             }
             assigneeComboBox.SelectedValuePath = ComboBoxItem.TagProperty.Name;
@@ -66,36 +50,46 @@ namespace TaskBoard.Views
                 assigneeComboBox.Items.Add(new ComboBoxItem()
                 {
                     Content = $"{item.FirstName} {item.LastName}",
-                    Tag = item.Id
+                    Tag = item.Id,
+                    IsSelected = item.Id == Model.Assignment.AssigneeId
                 });
             }
         }
 
-        private void createAssignmentButton_Click(object sender, RoutedEventArgs e)
+        private void saveButton_Click(object sender, RoutedEventArgs e)
         {
-            Model.CreatedAssignment.Name = assignmentNameTextBox.Text;
-            Model.CreatedAssignment.Description = assignmentDescriptionTextBox.Text;
-            Model.CreatedAssignment.StatusId = Int32.TryParse(assignmentStatusComboBox.SelectedValue.ToString(), out var statusId)
+            Model.EditedAssignment.Name = assignmentNameTextBox.Text;
+            Model.EditedAssignment.Description = assignmentDescriptionTextBox.Text;
+            Model.EditedAssignment.StatusId = Int32.TryParse(assignmentStatusComboBox.SelectedValue.ToString(), out var statusId)
                 ? statusId
-                : Model.Statuses.FirstOrDefault().Id;
-            Model.CreatedAssignment.ProjectId = Int32.TryParse(projectComboBox.SelectedValue.ToString(), out var projectId)
-                ? projectId
-                : Model.Projects.FirstOrDefault().Id;
-            Model.CreatedAssignment.AssigneeId = Int32.TryParse(assigneeComboBox.SelectedValue.ToString(), out var assigneeId)
+                : Model.Statuses.FirstOrDefault().Id;            
+            Model.EditedAssignment.AssigneeId = Int32.TryParse(assigneeComboBox.SelectedValue.ToString(), out var assigneeId)
                 ? assigneeId
                 : Model.Persons.FirstOrDefault().Id;
             using (var context = new TaskBoardDbContext())
             {
                 var assignmentsRepository = new Repository<Assignment>(context);
-                var assignment = _mapper.Map<Assignment>(Model.CreatedAssignment);
-                assignment = assignmentsRepository.Add(assignment);
+                var assignment = assignmentsRepository.GetSingle(x => x.Id == Model.Assignment.Id);
+                _mapper.Map(Model.EditedAssignment, assignment);
+                assignment = assignmentsRepository.Update(assignment);
                 context.SaveChanges();
             }
-
             this.Close();
         }
 
-        private void CreateAssignmentWindow_Closed(object sender, EventArgs e)
+        private void deleteAssignmentButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (var context = new TaskBoardDbContext())
+            {
+                var assignmentsRepository = new Repository<Assignment>(context);
+                var assignment = assignmentsRepository.GetSingle(x => x.Id == Model.Assignment.Id);
+                assignmentsRepository.Delete(assignment);
+                context.SaveChanges();
+            }
+            this.Close();
+        }
+
+        private void EditAssignmentWindow_Closed(object sender, EventArgs e)
         {
             var mainWindowViewModel = new MainWindowViewModel();
             using (var context = new TaskBoardDbContext())

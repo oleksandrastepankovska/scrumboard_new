@@ -1,10 +1,16 @@
-﻿using System.Windows;
+﻿using AutoMapper;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
+using TaskBoard.Core;
 using TaskBoard.Data;
 using TaskBoard.Data.Entities;
 using TaskBoard.Infrastructure.Concrete;
 using TaskBoard.ViewModels;
+using TaskBoard.ViewModels.Entities;
 
 namespace TaskBoard.Views
 {
@@ -13,16 +19,18 @@ namespace TaskBoard.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private IMapper _mapper { get; set; }
+        private MainWindowViewModel Model { get; set; }
+        public MainWindow(MainWindowViewModel model)
         {
+            _mapper = MapperFactory.CreateMapper();
+            Model = model;
             InitializeComponent();
             Loaded += MainWindow_Loaded;
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var model = new MainWindowViewModel();
-
             var mainPanel = new StackPanel() { Orientation = Orientation.Vertical };
 
             var controlPanel = new StackPanel();
@@ -34,22 +42,18 @@ namespace TaskBoard.Views
             };
             createAssignmentButton.Click += CreateAssignmentButton_Click;
             controlPanel.Children.Add(createAssignmentButton);
-
             mainPanel.Children.Add(controlPanel);
 
             var assignmentsPanel = new StackPanel() { Orientation = Orientation.Horizontal };
-            foreach (var workStatus in model.Statuses)
+            foreach (var workStatus in Model.Statuses)
             {
-                var assignmentsByWorkStatusPanel = new StackPanel();
-                assignmentsByWorkStatusPanel.Orientation = Orientation.Vertical;
-
                 var workStatusLabel = new Label();
                 workStatusLabel.Content = workStatus.Name;
-                assignmentsByWorkStatusPanel.Children.Add(workStatusLabel);
+                mainPanel.Children.Add(workStatusLabel);
 
                 var assignmentsDataGrid = new DataGrid();
                 assignmentsDataGrid.AutoGenerateColumns = false;
-                assignmentsDataGrid.ItemsSource = workStatus.Assignments;
+                assignmentsDataGrid.ItemsSource = Model.Assignments.Where(x => x.StatusId == workStatus.Id);
                 assignmentsDataGrid.Columns.Add(new DataGridTextColumn()
                 {
                     Binding = new Binding(nameof(Assignment.Name)),
@@ -64,9 +68,25 @@ namespace TaskBoard.Views
                     Width = 250,
                     IsReadOnly = true
                 });
-                assignmentsByWorkStatusPanel.Children.Add(assignmentsDataGrid);
-
-                assignmentsPanel.Children.Add(assignmentsByWorkStatusPanel);
+                assignmentsDataGrid.Columns.Add(new DataGridTextColumn()
+                {
+                    Binding = new Binding(nameof(Assignment.Assignee)),
+                    Header = "Assignee",
+                    Width = 250,
+                    IsReadOnly = true
+                });
+                assignmentsDataGrid.Columns.Add(new DataGridTextColumn()
+                {
+                    Binding = new Binding(nameof(Assignment.Project)),
+                    Header = "Project",
+                    Width = 175,
+                    IsReadOnly = true
+                });
+                var rowStyle = new Style(typeof(DataGridRow));
+                rowStyle.Setters.Add(new EventSetter(DataGridRow.MouseDoubleClickEvent,
+                                         new MouseButtonEventHandler(AssignmentsGridRow_DoubleClick)));
+                assignmentsDataGrid.RowStyle = rowStyle;
+                mainPanel.Children.Add(assignmentsDataGrid);
             }
 
             mainPanel.Children.Add(assignmentsPanel);
@@ -80,11 +100,40 @@ namespace TaskBoard.Views
             using (var context = new TaskBoardDbContext())
             {
                 var statusRepository = new Repository<Status>(context);
-                createAssignmentWindowModel.Statuses = statusRepository.GetAll(x => x.Assignments);
+                var statuses = statusRepository.GetAll();
+                createAssignmentWindowModel.Statuses = _mapper.Map<IEnumerable<Status>, IEnumerable<StatusViewModel>>(statuses);
+                var projectsRepository = new Repository<Project>(context);
+                var projects = projectsRepository.GetAll();
+                createAssignmentWindowModel.Projects = _mapper.Map<IEnumerable<Project>, IEnumerable<ProjectViewModel>>(projects);
+                var personRepository = new Repository<Person>(context);
+                var persons = personRepository.GetAll();
+                createAssignmentWindowModel.Persons = _mapper.Map<IEnumerable<Person>, IEnumerable<PersonViewModel>>(persons);
             }
 
             CreateAssignmentWindow createAssignmentWindow = new CreateAssignmentWindow(createAssignmentWindowModel);
             createAssignmentWindow.Show();
+            this.Close();
+        }
+
+        private void AssignmentsGridRow_DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var row = sender as DataGridRow;
+
+            var editAssignmentWindowViewModel = new EditAssignmentWindowViewModel();
+            editAssignmentWindowViewModel.Assignment = row.Item as AssignmentViewModel;
+            using (var context = new TaskBoardDbContext())
+            {
+                var statusRepository = new Repository<Status>(context);
+                var statuses = statusRepository.GetAll();
+                editAssignmentWindowViewModel.Statuses = _mapper.Map<IEnumerable<Status>, IEnumerable<StatusViewModel>>(statuses);
+                var personRepository = new Repository<Person>(context);
+                var persons = personRepository.GetAll();
+                editAssignmentWindowViewModel.Persons = _mapper.Map<IEnumerable<Person>, IEnumerable<PersonViewModel>>(persons);
+            }
+
+            var editAssignmentWindow = new EditAssignmentWindow(editAssignmentWindowViewModel);
+            editAssignmentWindow.Show();
+            this.Close();
         }
     }
 }
