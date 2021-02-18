@@ -37,6 +37,7 @@ namespace TaskBoard.Views
             DataContext = Model;
             InitializeComponent();
             Loaded += CreateAssignmentWindow_Loaded;
+            Closing += CreateAssignmentWindow_Closed;
         }
 
         private void CreateAssignmentWindow_Loaded(object sender, RoutedEventArgs e)
@@ -72,8 +73,6 @@ namespace TaskBoard.Views
 
         private void createAssignmentButton_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindowViewModel = new MainWindowViewModel();
-
             Model.CreatedAssignment.Name = assignmentNameTextBox.Text;
             Model.CreatedAssignment.Description = assignmentDescriptionTextBox.Text;
             Model.CreatedAssignment.StatusId = Int32.TryParse(assignmentStatusComboBox.SelectedValue.ToString(), out var statusId)
@@ -91,7 +90,17 @@ namespace TaskBoard.Views
                 var assignment = _mapper.Map<Assignment>(Model.CreatedAssignment);
                 assignment = assignmentsRepository.Add(assignment);
                 context.SaveChanges();
+            }
 
+            this.Close();
+        }
+
+        private void CreateAssignmentWindow_Closed(object sender, EventArgs e)
+        {
+            var mainWindowViewModel = new MainWindowViewModel();
+            using (var context = new TaskBoardDbContext())
+            {
+                var assignmentsRepository = new Repository<Assignment>(context);
                 var statusRepository = new Repository<Status>(context);
                 var statuses = statusRepository.GetAll(x => x.Assignments);
                 mainWindowViewModel.Statuses = _mapper.Map<IEnumerable<Status>, IEnumerable<StatusViewModel>>(statuses);
@@ -101,7 +110,6 @@ namespace TaskBoard.Views
 
             var mainWindow = new MainWindow(mainWindowViewModel);
             mainWindow.Show();
-            this.Close();
         }
     }
 }

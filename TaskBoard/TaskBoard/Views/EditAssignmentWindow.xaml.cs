@@ -27,6 +27,7 @@ namespace TaskBoard.Views
             DataContext = Model;
             InitializeComponent();
             Loaded += EditAssignmentWindow_Loaded;
+            Closing += EditAssignmentWindow_Closed;
         }
 
         private void EditAssignmentWindow_Loaded(object sender, RoutedEventArgs e)
@@ -57,8 +58,6 @@ namespace TaskBoard.Views
 
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindowViewModel = new MainWindowViewModel();
-
             Model.EditedAssignment.Name = assignmentNameTextBox.Text;
             Model.EditedAssignment.Description = assignmentDescriptionTextBox.Text;
             Model.EditedAssignment.StatusId = Int32.TryParse(assignmentStatusComboBox.SelectedValue.ToString(), out var statusId)
@@ -74,29 +73,28 @@ namespace TaskBoard.Views
                 _mapper.Map(Model.EditedAssignment, assignment);
                 assignment = assignmentsRepository.Update(assignment);
                 context.SaveChanges();
-
-                var statusRepository = new Repository<Status>(context);
-                var statuses = statusRepository.GetAll(x => x.Assignments);
-                mainWindowViewModel.Statuses = _mapper.Map<IEnumerable<Status>, IEnumerable<StatusViewModel>>(statuses);
-                var assignments = assignmentsRepository.GetAll(x => x.Project, x => x.Assignee);
-                mainWindowViewModel.Assignments = _mapper.Map<IEnumerable<Assignment>, IEnumerable<AssignmentViewModel>>(assignments);
             }
-
-            var mainWindow = new MainWindow(mainWindowViewModel);
-            mainWindow.Show();
             this.Close();
         }
 
         private void deleteAssignmentButton_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindowViewModel = new MainWindowViewModel();
             using (var context = new TaskBoardDbContext())
             {
                 var assignmentsRepository = new Repository<Assignment>(context);
                 var assignment = assignmentsRepository.GetSingle(x => x.Id == Model.Assignment.Id);
                 assignmentsRepository.Delete(assignment);
                 context.SaveChanges();
+            }
+            this.Close();
+        }
 
+        private void EditAssignmentWindow_Closed(object sender, EventArgs e)
+        {
+            var mainWindowViewModel = new MainWindowViewModel();
+            using (var context = new TaskBoardDbContext())
+            {
+                var assignmentsRepository = new Repository<Assignment>(context);
                 var statusRepository = new Repository<Status>(context);
                 var statuses = statusRepository.GetAll(x => x.Assignments);
                 mainWindowViewModel.Statuses = _mapper.Map<IEnumerable<Status>, IEnumerable<StatusViewModel>>(statuses);
@@ -106,7 +104,6 @@ namespace TaskBoard.Views
 
             var mainWindow = new MainWindow(mainWindowViewModel);
             mainWindow.Show();
-            this.Close();
         }
     }
 }
