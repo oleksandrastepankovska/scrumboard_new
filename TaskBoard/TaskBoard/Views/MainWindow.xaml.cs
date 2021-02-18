@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using TaskBoard.Core;
 using TaskBoard.Data;
 using TaskBoard.Data.Entities;
@@ -81,6 +82,10 @@ namespace TaskBoard.Views
                     Width = 175,
                     IsReadOnly = true
                 });
+                var rowStyle = new Style(typeof(DataGridRow));
+                rowStyle.Setters.Add(new EventSetter(DataGridRow.MouseDoubleClickEvent,
+                                         new MouseButtonEventHandler(AssignmentsGridRow_DoubleClick)));
+                assignmentsDataGrid.RowStyle = rowStyle;
                 mainPanel.Children.Add(assignmentsDataGrid);
             }
 
@@ -107,6 +112,14 @@ namespace TaskBoard.Views
 
             CreateAssignmentWindow createAssignmentWindow = new CreateAssignmentWindow(createAssignmentWindowModel);
             createAssignmentWindow.Show();
+        }
+
+        private void AssignmentsGridRow_DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var row = sender as DataGridRow;
+
+            var editAssignmentWindow = new EditAssignmentWindow();
+            editAssignmentWindow.Show();
         }
     }
 }

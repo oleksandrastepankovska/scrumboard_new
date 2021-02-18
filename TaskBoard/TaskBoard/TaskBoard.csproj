@@ -72,6 +72,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\EditAssignmentWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -106,6 +110,9 @@
     <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
     <Compile Include="Views\CreateAssignmentWindow.xaml.cs">
       <DependentUpon>CreateAssignmentWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditAssignmentWindow.xaml.cs">
+      <DependentUpon>EditAssignmentWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
