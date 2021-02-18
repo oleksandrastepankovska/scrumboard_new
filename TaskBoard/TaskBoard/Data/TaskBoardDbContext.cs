@@ -11,6 +11,8 @@ namespace TaskBoard.Data
 
         public DbSet<Assignment> Assignment { get; set; }
         public DbSet<Status> Status { get; set; }
+        public DbSet<Project> Project { get; set; }
+        public DbSet<Person> Person { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
