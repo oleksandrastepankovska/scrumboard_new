@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using TaskBoard.Data;
@@ -13,16 +14,16 @@ namespace TaskBoard.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private MainWindowViewModel Model { get; set; }
+        public MainWindow(MainWindowViewModel model)
         {
+            Model = model;
             InitializeComponent();
             Loaded += MainWindow_Loaded;
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var model = new MainWindowViewModel();
-
             var mainPanel = new StackPanel() { Orientation = Orientation.Vertical };
 
             var controlPanel = new StackPanel();
@@ -34,22 +35,18 @@ namespace TaskBoard.Views
             };
             createAssignmentButton.Click += CreateAssignmentButton_Click;
             controlPanel.Children.Add(createAssignmentButton);
-
             mainPanel.Children.Add(controlPanel);
 
             var assignmentsPanel = new StackPanel() { Orientation = Orientation.Horizontal };
-            foreach (var workStatus in model.Statuses)
+            foreach (var workStatus in Model.Statuses)
             {
-                var assignmentsByWorkStatusPanel = new StackPanel();
-                assignmentsByWorkStatusPanel.Orientation = Orientation.Vertical;
-
                 var workStatusLabel = new Label();
                 workStatusLabel.Content = workStatus.Name;
-                assignmentsByWorkStatusPanel.Children.Add(workStatusLabel);
+                mainPanel.Children.Add(workStatusLabel);
 
                 var assignmentsDataGrid = new DataGrid();
                 assignmentsDataGrid.AutoGenerateColumns = false;
-                assignmentsDataGrid.ItemsSource = workStatus.Assignments;
+                assignmentsDataGrid.ItemsSource = Model.Assignments.Where(x => x.StatusId == workStatus.Id);
                 assignmentsDataGrid.Columns.Add(new DataGridTextColumn()
                 {
                     Binding = new Binding(nameof(Assignment.Name)),
@@ -64,9 +61,21 @@ namespace TaskBoard.Views
                     Width = 250,
                     IsReadOnly = true
                 });
-                assignmentsByWorkStatusPanel.Children.Add(assignmentsDataGrid);
-
-                assignmentsPanel.Children.Add(assignmentsByWorkStatusPanel);
+                assignmentsDataGrid.Columns.Add(new DataGridTextColumn()
+                {
+                    Binding = new Binding(nameof(Assignment.Assignee)),
+                    Header = "Assignee",
+                    Width = 250,
+                    IsReadOnly = true
+                });
+                assignmentsDataGrid.Columns.Add(new DataGridTextColumn()
+                {
+                    Binding = new Binding(nameof(Assignment.Project)),
+                    Header = "Project",
+                    Width = 175,
+                    IsReadOnly = true
+                });
+                mainPanel.Children.Add(assignmentsDataGrid);
             }
 
             mainPanel.Children.Add(assignmentsPanel);

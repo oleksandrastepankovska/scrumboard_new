@@ -1,4 +1,4 @@
-﻿namespace TaskBoard.ViewModels.Assignments
+﻿namespace TaskBoard.ViewModels.Entities
 {
     public class StatusViewModel
     {

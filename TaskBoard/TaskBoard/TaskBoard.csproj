@@ -97,8 +97,9 @@
     <Compile Include="Data\TaskBoardDbContext.cs" />
     <Compile Include="Infrastructure\Abstract\IRepository.cs" />
     <Compile Include="Infrastructure\Concrete\Repository.cs" />
-    <Compile Include="ViewModels\Assignments\CreateAssignmentViewModel.cs" />
-    <Compile Include="ViewModels\Assignments\StatusViewModel.cs" />
+    <Compile Include="ViewModels\Entities\AssignmentViewModel.cs" />
+    <Compile Include="ViewModels\Entities\CreateAssignmentViewModel.cs" />
+    <Compile Include="ViewModels\Entities\StatusViewModel.cs" />
     <Compile Include="ViewModels\Windows\CreateAssignmentWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
     <Compile Include="Views\CreateAssignmentWindow.xaml.cs">

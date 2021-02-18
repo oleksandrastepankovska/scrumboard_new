@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using TaskBoard.Data.Entities;
-using TaskBoard.ViewModels.Assignments;
+using TaskBoard.ViewModels.Entities;
 
 namespace TaskBoard.ViewModels
 {
