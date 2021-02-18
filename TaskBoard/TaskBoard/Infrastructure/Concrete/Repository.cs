@@ -19,7 +19,7 @@ namespace TaskBoard.Infrastructure.Concrete
             _dbSet = dbContext.Set<TEntity>();
         }
 
-        public TEntity Create(TEntity entity)
+        public TEntity Add(TEntity entity)
         {
             _dbSet.Add(entity);
             return entity;
