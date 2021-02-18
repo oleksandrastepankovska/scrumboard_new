@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
+using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using TaskBoard.Core;
+using TaskBoard.Data;
+using TaskBoard.Data.Entities;
+using TaskBoard.Infrastructure.Concrete;
 using TaskBoard.ViewModels;
 
 namespace TaskBoard.Views
@@ -48,27 +53,25 @@ namespace TaskBoard.Views
             }
         }
 
-        private void createAssignmentButton_Click(object sender, RoutedEventArgs e)
+        private void saveButton_Click(object sender, RoutedEventArgs e)
         {
-            //Model.CreatedAssignment.Name = assignmentNameTextBox.Text;
-            //Model.CreatedAssignment.Description = assignmentDescriptionTextBox.Text;
-            //Model.CreatedAssignment.StatusId = Int32.TryParse(assignmentStatusComboBox.SelectedValue.ToString(), out var statusId)
-            //    ? statusId
-            //    : Model.Statuses.FirstOrDefault().Id;
-            //Model.CreatedAssignment.ProjectId = Int32.TryParse(projectComboBox.SelectedValue.ToString(), out var projectId)
-            //    ? projectId
-            //    : Model.Projects.FirstOrDefault().Id;
-            //Model.CreatedAssignment.AssigneeId = Int32.TryParse(assigneeComboBox.SelectedValue.ToString(), out var assigneeId)
-            //    ? assigneeId
-            //    : Model.Persons.FirstOrDefault().Id;
-            //using (var context = new TaskBoardDbContext())
-            //{
-            //    var assignmentRepository = new Repository<Assignment>(context);
-            //    var assignment = _mapper.Map<Assignment>(Model.CreatedAssignment);
-            //    assignment = assignmentRepository.Add(assignment);
-            //    context.SaveChanges();
-            //}
-            //this.Close();
+            Model.EditedAssignment.Name = assignmentNameTextBox.Text;
+            Model.EditedAssignment.Description = assignmentDescriptionTextBox.Text;
+            Model.EditedAssignment.StatusId = Int32.TryParse(assignmentStatusComboBox.SelectedValue.ToString(), out var statusId)
+                ? statusId
+                : Model.Statuses.FirstOrDefault().Id;            
+            Model.EditedAssignment.AssigneeId = Int32.TryParse(assigneeComboBox.SelectedValue.ToString(), out var assigneeId)
+                ? assigneeId
+                : Model.Persons.FirstOrDefault().Id;
+            using (var context = new TaskBoardDbContext())
+            {
+                var assignmentRepository = new Repository<Assignment>(context);
+                var assignment = assignmentRepository.GetSingle(x => x.Id == Model.Assignment.Id);
+                _mapper.Map(Model.EditedAssignment, assignment);
+                assignment = assignmentRepository.Update(assignment);
+                context.SaveChanges();
+            }
+            this.Close();
         }
     }
 }

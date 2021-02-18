@@ -17,6 +17,8 @@ namespace TaskBoard.Core
 
                 cfg.CreateMap<CreateAssignmentViewModel, Assignment>();
 
+                cfg.CreateMap<EditAssignmentViewModel, Assignment>();
+
                 cfg.CreateMap<Status, StatusViewModel>();
 
                 cfg.CreateMap<StatusViewModel, Status>();
